@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damareen – Kazamaták Szerkesztése</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <script src="{% static 'script.js' %}" defer></script>
+</head>
+<body>
+  <button class="btn back-btn" onclick="logout()">⬅ Kijelentkezés</button>
+  <div class="container">
+    <h1>👑 Kazamaták Szerkesztése</h1>
+    <div class="top-action-bar">
+      <p class="info-message" style="margin: 0;">Válassz ki egy kazamatát és állítsd össze az ellenfél pakliját!</p>
+      <button class="btn btn-success" onclick="showCreateDungeonModal()">➕ Új Kazamata</button>
+    </div>
+    
+    <div class="dungeons-grid" id="gmDungeonsGrid">
+      {% for dungeon in dungeons %}
+      <div class="dungeon-card">
+        <h3>{{ dungeon.name }}</h3>
+        <div class="dungeon-tags">
+          <span class="tag">{{ dungeon.type }}</span>
+          <span class="tag variant">{{ dungeon.variant }}</span>
+        </div>
+        {% if dungeon.card_count > 0 %}
+          <p style="color: #667eea; margin-top: 10px;">📦 {{ dungeon.card_count }} kártya beállítva</p>
+        {% else %}
+          <p style="color: #999; margin-top: 10px;">Még nincs beállítva</p>
+        {% endif %}
+        <button class="btn" onclick="editDungeon({{ dungeon.id }})">Szerkesztés</button>
+      </div>
+      {% empty %}
+      <p class="info-message">Nincsenek kazamaták. Hozz létre egy újat!</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div id="gmDeckScreen" class="screen">
+    <button class="btn return-btn" onclick="backToGMDungeons()">⬅ Vissza</button>
+    <div class="container">
+      <h1>👑 Kazamata Szerkesztése</h1>
+      <div class="deck-builder-container">
+        <h2 id="gmDeckTitle">{{ editing_dungeon.name|default:"Kazamata neve" }} - Szerkesztés</h2>
+        <div class="deck-info">
+          <h3>Kiválasztott kártyák: <span id="gmCardCount">0</span></h3>
+          <p>Állítsd össze az ellenfél pakliját. Jelölj meg egy kártyát vezérként (👑)! Új kártyát is létrehozhatsz.</p>
+        </div>
+        
+        <form method="post" action="{% url 'save_dungeon' %}" id="dungeonForm">
+          {% csrf_token %}
+          <input type="hidden" name="dungeon_id" value="{{ editing_dungeon.id|default:'' }}">
+          <input type="hidden" name="selected_cards" id="selectedCardsInput">
+          <input type="hidden" name="leader_card" id="leaderCardInput">
+          
+          <button type="button" class="btn btn-success btn-small" onclick="showCreateCardModal()" style="margin-bottom: 20px;">➕ Új Kártya Létrehozása</button>
+          
+          <div class="cards-grid" id="gmCardsGrid">
+            {% for card in all_cards %}
+            <div class="card-item {% if card.id in selected_cards %}selected{% endif %}" id="gm-card-{{ card.id }}">
+              {% if card.id == leader_card %}
+              <div class="leader-badge">👑</div>
+              {% endif %}
+              {% if card.is_custom %}
+              <button class="delete-card-btn" onclick="deleteCustomCard(event, {{ card.id }})">×</button>
+              {% endif %}
+              <h4>{{ card.name }}</h4>
+              <div class="card-stats">
+                {% if card.type == 'spell' %}
+                  ✨ Varázslat
+                {% else %}
+                  ⚔️ {{ card.attack }} | 🛡️ {{ card.defense }}
+                {% endif %}
+              </div>
+              <div class="leader-checkbox">
+                <input type="checkbox" id="leader-{{ card.id }}" 
+                  {% if card.id == leader_card %}checked{% endif %}>
+                <label for="leader-{{ card.id }}">Vezér</label>
+              </div>
+            </div>
+            {% empty %}
+            <p class="info-message">Nincsenek kártyák. Hozz létre újakat!</p>
+            {% endfor %}
+          </div>
+          
+          <button type="submit" class="btn">💾 Kazamata mentése</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="createDungeonModal" class="modal">
+    <div class="modal-content">
+      <h2>➕ Új Kazamata Létrehozása</h2>
+      <form method="post" action="{% url 'create_dungeon' %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="newDungeonName">Kazamata neve</label>
+          <input type="text" id="newDungeonName" name="name" placeholder="Például: Sötét Erdő" required maxlength="50" value="{{ form.name.value|default:'' }}">
+          {% if form.name.errors %}
+            <div class="error">{{ form.name.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="newDungeonType">Kazamata típusa</label>
+          <select id="newDungeonType" name="type" class="dungeon-select" required>
+            <option value="">Válassz típust...</option>
+            <option value="Temető" {% if form.type.value == "Temető" %}selected{% endif %}>Temető</option>
+            <option value="Falu" {% if form.type.value == "Falu" %}selected{% endif %}>Falu</option>
+            <option value="Kastély" {% if form.type.value == "Kastély" %}selected{% endif %}>Kastély</option>
+          </select>
+          {% if form.type.errors %}
+            <div class="error">{{ form.type.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="newDungeonVariant">Kazamata változata</label>
+          <select id="newDungeonVariant" name="variant" class="dungeon-select" required>
+            <option value="">Válassz változatot...</option>
+            <option value="Hegy" {% if form.variant.value == "Hegy" %}selected{% endif %}>Hegy</option>
+            <option value="Sivatag" {% if form.variant.value == "Sivatag" %}selected{% endif %}>Sivatag</option>
+            <option value="Mocsár" {% if form.variant.value == "Mocsár" %}selected{% endif %}>Mocsár</option>
+            <option value="Barlang" {% if form.variant.value == "Barlang" %}selected{% endif %}>Barlang</option>
+            <option value="Dzsungel" {% if form.variant.value == "Dzsungel" %}selected{% endif %}>Dzsungel</option>
+          </select>
+          {% if form.variant.errors %}
+            <div class="error">{{ form.variant.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="modal-buttons">
+          <button type="submit" class="btn btn-success">Létrehozás</button>
+          <button type="button" class="btn btn-secondary" onclick="closeCreateDungeonModal()">Mégse</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="createCardModal" class="modal">
+    <div class="modal-content">
+      <h2>➕ Új Kártya Létrehozása</h2>
+      <form method="post" action="{% url 'create_card' %}" id="createCardForm">
+        {% csrf_token %}
+        <input type="hidden" name="dungeon_id" value="{{ editing_dungeon.id|default:'' }}">
+
+        <div class="form-group">
+          <label for="newCardName">Kártya neve</label>
+          <input type="text" id="newCardName" name="name" placeholder="Például: Tűz Démon" required maxlength="16" value="{{ card_form.name.value|default:'' }}">
+          {% if card_form.name.errors %}
+            <div class="error">{{ card_form.name.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="newCardType">Kártya típusa</label>
+          <select id="newCardType" name="card_type" class="dungeon-select" onchange="toggleCardStats()" required>
+            <option value="unit" {% if card_form.card_type.value == "unit" %}selected{% endif %}>Egység</option>
+            <option value="spell" {% if card_form.card_type.value == "spell" %}selected{% endif %}>Varázslat</option>
+          </select>
+          {% if card_form.card_type.errors %}
+            <div class="error">{{ card_form.card_type.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group" id="attackGroup">
+          <label for="newCardAttack">Támadás</label>
+          <input type="number" id="newCardAttack" name="attack" placeholder="0-20" min="2" max="100" value="{{ card_form.attack.value|default:'5' }}" required>
+          {% if card_form.attack.errors %}
+            <div class="error">{{ card_form.attack.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group" id="defenseGroup">
+          <label for="newCardDefense">Védelem</label>
+          <input type="number" id="newCardDefense" name="defense" placeholder="0-20" min="1" max="100" value="{{ card_form.defense.value|default:'3' }}" required>
+          {% if card_form.defense.errors %}
+            <div class="error">{{ card_form.defense.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="modal-buttons">
+          <button type="submit" class="btn btn-success">Létrehozás</button>
+          <button type="button" class="btn btn-secondary" onclick="closeCreateCardModal()">Mégse</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

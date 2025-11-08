@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damareen – Játékos Kazamaták</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button class="btn back-btn" onclick="logout()">⬅ Kijelentkezés</button>
+  <div class="container">
+    <h1>🗡️ Válassz Kazamatát</h1>
+    <p class="info-message">Kattints egy kazamatára és állítsd össze a paklidat a harchoz!</p>
+    <div class="dungeons-grid" id="playerDungeonsGrid"></div>
+  </div>
+
+  <!-- Pakli összeállítás -->
+  <div id="playerDeckScreen" class="screen">
+    <button class="btn return-btn" onclick="backToPlayerDungeons()">⬅ Vissza</button>
+    <div class="container">
+      <h1>📚 Pakli Összeállítás</h1>
+      <div class="deck-builder-container">
+        <h2 id="playerDeckTitle">Kazamata neve</h2>
+        <div class="deck-info">
+          <h3>Kiválasztott kártyák: <span id="playerCardCount">0</span></h3>
+          <p>Kattints a kártyákra a hozzáadáshoz vagy eltávolításhoz. Válassz stratégiát és készülj fel a harcra!</p>
+        </div>
+        <div class="cards-grid" id="playerCardsGrid"></div>
+        <button class="btn" onclick="startBattle()">⚔️ Harc indítása</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

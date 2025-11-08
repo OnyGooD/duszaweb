@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damareen – Szerepkör választás</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <script src="{% static 'script.js' %}" defer></script>
+</head>
+<body>
+  <div class="container">
+    <div class="auth-container">
+      <div class="auth-form">
+        <h1>⚔️ DAMAREEN</h1>
+        <p class="subtitle">Válaszd ki a szerepköröd</p>
+
+        <div class="form-buttons">
+          <a href="{% url 'player_login' %}" class="btn">🎮 Játékosként lépek be</a>
+          <a href="{% url 'gamemaster_login' %}" class="btn btn-success">👑 Játékmesterként lépek be</a>
+        </div>
+
+        <div class="auth-switch">
+          Nincs még fiókod? <a href="{% url 'register' %}">Regisztrálj most!</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

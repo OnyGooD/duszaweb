@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damareen – Harc</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <script src="{% static 'script.js' %}" defer></script>
+</head>
+<body>
+  <button class="btn back-btn" onclick="logout()">⬅ Kijelentkezés</button>
+  <div class="container">
+    <h1>⚔️ Csata</h1>
+    <p class="info-message">A harc elkezdődött! Használd a kártyáidat, hogy legyőzd az ellenfelet.</p>
+    
+    <div id="battleField">
+      {% if battle_data %}
+      <div class="battle-container">
+        <div class="battle-info-box">
+          <h2>{{ battle_data.dungeon.name }}</h2>
+          <div class="battle-details">
+            {% for round in battle_data.rounds %}
+            <div class="detail-row">
+              <span class="detail-label">Kör {{ forloop.counter }}:</span>
+              <span class="detail-value">{{ round.result }}</span>
+            </div>
+            {% endfor %}
+            <div class="detail-row">
+              <span class="detail-label">Eredmény:</span>
+              <span class="detail-value {% if battle_data.player_won %}victory{% else %}defeat{% endif %}">
+                {% if battle_data.player_won %}Győzelem!{% else %}Vereség!{% endif %}
+              </span>
+            </div>
+            {% if battle_data.reward %}
+            <div class="detail-row">
+              <span class="detail-label">Nyeremény:</span>
+              <span class="detail-value">{{ battle_data.reward }}</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <p class="info-message">A harc előkészítése...</p>
+      {% endif %}
+    </div>
+    
+    <form method="post" action="{% url 'end_battle' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn">🏁 Harc befejezése</button>
+    </form>
+  </div>
+</body>
+</html>

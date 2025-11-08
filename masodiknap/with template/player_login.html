@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damareen – Játékos Bejelentkezés</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <script src="{% static 'script.js' %}" defer></script>
+</head>
+<body>
+  <div class="container">
+    <div class="auth-container">
+      <div class="auth-form">
+        <h1>⚔️ DAMAREEN</h1>
+        <p class="subtitle">Lépj be Játékosként</p>
+
+        <form method="post" action="{% url 'player_login' %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="playerUsername">Felhasználónév</label>
+            <input type="text" id="playerUsername" name="username" placeholder="Add meg a felhasználóneved" value="{{ form.username.value|default:'' }}" required>
+            {% if form.username.errors %}
+              <div class="error">{{ form.username.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="playerPassword">Jelszó</label>
+            <input type="password" id="playerPassword" name="password" placeholder="Add meg a jelszavad" required>
+            {% if form.password.errors %}
+              <div class="error">{{ form.password.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" class="btn">Bejelentkezés</button>
+          </div>
+        </form>
+
+        {% if messages %}
+          <div class="messages">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-error">
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="auth-switch">
+          Nincs még fiókod? <a href="{% url 'register' %}">Regisztrálj most!</a><br>
+          <a href="{% url 'home' %}">⬅ Vissza</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damareen – Játékos Bejelentkezés</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <div class="auth-container">
+      <div class="auth-form">
+        <h1>⚔️ DAMAREEN</h1>
+        <p class="subtitle">Lépj be Játékosként</p>
+
+        <div class="form-group">
+          <label for="playerUsername">Felhasználónév</label>
+          <input type="text" id="playerUsername" placeholder="Add meg a felhasználóneved">
+        </div>
+
+        <div class="form-group">
+          <label for="playerPassword">Jelszó</label>
+          <input type="password" id="playerPassword" placeholder="Add meg a jelszavad">
+        </div>
+
+        <div class="form-buttons">
+          <button class="btn" onclick="playerLogin()">Bejelentkezés</button>
+        </div>
+
+        <div class="auth-switch">
+          Nincs még fiókod? <a href="register.html">Regisztrálj most!</a><br>
+          <a href="index.html">⬅ Vissza</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

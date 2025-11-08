@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damareen – Játékos Kazamaták</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <script src="{% static 'script.js' %}" defer></script>
+</head>
+<body>
+  <button class="btn back-btn" onclick="logout()">⬅ Kijelentkezés</button>
+  <div class="container">
+    <h1>🗡️ Válassz Kazamatát</h1>
+    <p class="info-message">Kattints egy kazamatára és állítsd össze a paklidat a harchoz!</p>
+    
+    <div class="dungeons-grid" id="playerDungeonsGrid">
+      {% for dungeon in dungeons %}
+      <div class="dungeon-card">
+        <h3>{{ dungeon.name }}</h3>
+        <div class="dungeon-tags">
+          <span class="tag">{{ dungeon.type }}</span>
+          <span class="tag variant">{{ dungeon.variant }}</span>
+        </div>
+        <button class="btn" onclick="enterDungeon({{ dungeon.id }})">Belépés</button>
+      </div>
+      {% empty %}
+      <p class="info-message">Nincsenek elérhető kazamaták.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div id="playerDeckScreen" class="screen">
+    <button class="btn return-btn" onclick="backToPlayerDungeons()">⬅ Vissza</button>
+    <div class="container">
+      <h1>📚 Pakli Összeállítás</h1>
+      <div class="deck-builder-container">
+        <h2 id="playerDeckTitle">{{ selected_dungeon.name|default:"Kazamata neve" }}</h2>
+        <div class="deck-info">
+          <h3>Kiválasztott kártyák: <span id="playerCardCount">0</span></h3>
+          <p>Kattints a kártyákra a hozzáadáshoz vagy eltávolításhoz. Válassz stratégiát és készülj fel a harcra!</p>
+        </div>
+        <div class="cards-grid" id="playerCardsGrid">
+          {% for card in available_cards %}
+          <div class="card-item" data-card-id="{{ card.id }}">
+            <h4>{{ card.name }}</h4>
+            <div class="card-stats">
+              {% if card.type == 'spell' %}
+                ✨ Varázslat
+              {% else %}
+                ⚔️ {{ card.attack }} | 🛡️ {{ card.defense }}
+              {% endif %}
+            </div>
+          </div>
+          {% empty %}
+          <p class="info-message">Nincsenek elérhető kártyák.</p>
+          {% endfor %}
+        </div>
+        <form method="post" action="{% url 'start_battle' %}">
+          {% csrf_token %}
+          <input type="hidden" name="dungeon_id" id="dungeonIdInput" value="{{ selected_dungeon.id|default:'' }}">
+          <input type="hidden" name="selected_cards" id="selectedCardsInput">
+          <button type="submit" class="btn">⚔️ Harc indítása</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

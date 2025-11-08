@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damareen – Kazamaták Szerkesztése</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button class="btn back-btn" onclick="logout()">⬅ Kijelentkezés</button>
+  <div class="container">
+    <h1>👑 Kazamaták Szerkesztése</h1>
+    <div class="top-action-bar">
+      <p class="info-message" style="margin: 0;">Válassz ki egy kazamatát és állítsd össze az ellenfél pakliját!</p>
+      <button class="btn btn-success" onclick="showCreateDungeonModal()">➕ Új Kazamata</button>
+    </div>
+    <div class="dungeons-grid" id="gmDungeonsGrid"></div>
+  </div>
+
+  <!-- Pakli szerkesztés -->
+  <div id="gmDeckScreen" class="screen">
+    <button class="btn return-btn" onclick="backToGMDungeons()">⬅ Vissza</button>
+    <div class="container">
+      <h1>👑 Kazamata Szerkesztése</h1>
+      <div class="deck-builder-container">
+        <h2 id="gmDeckTitle">Kazamata neve</h2>
+        <div class="deck-info">
+          <h3>Kiválasztott kártyák: <span id="gmCardCount">0</span></h3>
+          <p>Állítsd össze az ellenfél pakliját. Jelölj meg egy kártyát vezérként (👑)! Új kártyát is létrehozhatsz.</p>
+        </div>
+        <button class="btn btn-success btn-small" onclick="showCreateCardModal()" style="margin-bottom: 20px;">➕ Új Kártya Létrehozása</button>
+        <div class="cards-grid" id="gmCardsGrid"></div>
+        <button class="btn" onclick="saveDungeon()">💾 Kazamata mentése</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modálok -->
+  <div id="createDungeonModal" class="modal">
+    <div class="modal-content">
+      <h2>➕ Új Kazamata Létrehozása</h2>
+      <div class="form-group">
+        <label for="newDungeonName">Kazamata neve</label>
+        <input type="text" id="newDungeonName" placeholder="Például: Sötét Erdő">
+      </div>
+
+      <div class="form-group">
+        <label for="newDungeonType">Kazamata típusa</label>
+        <select id="newDungeonType" class="dungeon-select">
+          <option value="">Válassz típust...</option>
+          <option value="Temető">Temető</option>
+          <option value="Falu">Falu</option>
+          <option value="Kastély">Kastély</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="newDungeonVariant">Kazamata változata</label>
+        <select id="newDungeonVariant" class="dungeon-select">
+          <option value="">Válassz változatot...</option>
+          <option value="Hegy">Hegy</option>
+          <option value="Sivatag">Sivatag</option>
+          <option value="Mocsár">Mocsár</option>
+          <option value="Barlang">Barlang</option>
+          <option value="Dzsungel">Dzsungel</option>
+        </select>
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn btn-success" onclick="createDungeon()">Létrehozás</button>
+        <button class="btn btn-secondary" onclick="closeCreateDungeonModal()">Mégse</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="createCardModal" class="modal">
+    <div class="modal-content">
+      <h2>➕ Új Kártya Létrehozása</h2>
+
+      <div class="form-group">
+        <label for="newCardName">Kártya neve</label>
+        <input type="text" id="newCardName" placeholder="Például: Tűz Démon">
+      </div>
+
+      <div class="form-group">
+        <label for="newCardType">Kártya típusa</label>
+        <select id="newCardType" class="dungeon-select" onchange="toggleCardStats()">
+          <option value="unit">Egység</option>
+          <option value="spell">Varázslat</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="attackGroup">
+        <label for="newCardAttack">Támadás</label>
+        <input type="number" id="newCardAttack" placeholder="0-20" min="0" max="20" value="5">
+      </div>
+
+      <div class="form-group" id="defenseGroup">
+        <label for="newCardDefense">Védelem</label>
+        <input type="number" id="newCardDefense" placeholder="0-20" min="0" max="20" value="3">
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn btn-success" onclick="createCard()">Létrehozás</button>
+        <button class="btn btn-secondary" onclick="closeCreateCardModal()">Mégse</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
