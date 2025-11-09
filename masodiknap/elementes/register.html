@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damareen – Regisztráció</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <div class="auth-container">
+      <div class="auth-form">
+        <h1>⚔️ DAMAREEN</h1>
+        <p class="subtitle">Csatlakozz a kalandhoz</p>
+
+        <div class="form-group">
+          <label for="regUsername">Felhasználónév</label>
+          <input type="text" id="regUsername" placeholder="Válassz egy nevet">
+        </div>
+
+        <div class="form-group">
+          <label for="regEmail">Email</label>
+          <input type="email" id="regEmail" placeholder="pelda@email.com">
+        </div>
+
+        <div class="form-group">
+          <label for="regPassword">Jelszó</label>
+          <input type="password" id="regPassword" placeholder="Legalább 6 karakter">
+        </div>
+
+        <div class="form-group">
+          <label for="regConfirm">Jelszó újra</label>
+          <input type="password" id="regConfirm" placeholder="Írd be újra a jelszót">
+        </div>
+
+        <div class="form-group">
+          <label for="regRole">Szerepkör</label>
+          <select id="regRole">
+            <option value="player">🎮 Játékos</option>
+            <option value="gamemaster">👑 Játékmester</option>
+          </select>
+        </div>
+
+        <div class="form-buttons">
+          <button class="btn" onclick="register()">Regisztráció</button>
+        </div>
+
+        <div class="auth-switch">
+          Van már fiókod? <a href="index.html">Lépj be!</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
